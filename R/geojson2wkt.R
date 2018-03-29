@@ -1,217 +1,129 @@
-#' Convert GeoJSON-like objects to WKT.
+#' Convert GeoJSON-like objects to WKT
 #'
 #' @export
 #'
-#' @param obj A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
-#' @param fmt Format string which indicates the number of digits to display after the
-#' decimal point when formatting coordinates.
-#' @param ... Further args passed on to \code{\link[jsonlite]{fromJSON}} only in the event of json
-#' passed as a character string.
-#' @seealso \code{\link{wkt2geojson}}
-#' @examples
-#' # point
-#' point <- list('type' = 'Point', 'coordinates' = c(116.4, 45.2))
-#' geojson2wkt(point)
+#' @template fmt
+#' @template geojson2wktegs
+#' @param obj (list/json/character) A GeoJSON-like object representing a
+#' Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon,
+#' or GeometryCollection
+#' @param third (character) Only applicable when there are three dimensions. 
+#' If `m`, assign a `M` value for a measurement, and if `z` assign a 
+#' `Z` value for three-dimenionsal system. Case is ignored. An `M` value 
+#' represents  a measurement, while a `Z` value usually represents altitude 
+#' (but can be something like depth in a water based location).
+#' @param ... Further args passed on to [jsonlite::fromJSON()] only
+#' in the event of json passed as a character string (can also be json
+#' of class `json` as returned from [jsonlite::toJSON()] or simply coerced
+#' to `json` by adding the class manually)
+#' @seealso [wkt2geojson()]
 #'
-#' # multipoint
-#' mp <- list(type = 'MultiPoint', coordinates=list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18)))
-#' geojson2wkt(mp)
+#' @references <https://tools.ietf.org/html/rfc7946>,
+#' <https://en.wikipedia.org/wiki/Well-known_text>
 #'
-#' # linestring
-#' st <- list(type = 'LineString',
-#'            coordinates = list(c(0.0, 0.0, 10.0), c(2.0, 1.0, 20.0),
-#'                              c(4.0, 2.0, 30.0), c(5.0, 4.0, 40.0)))
-#' geojson2wkt(st)
+#' @section Inputs:
+#' Input to `obj` parameter can take two forms:
 #'
-#' # multilinestring
-#' multist <- list(type = 'MultiLineString',
-#'      coordinates = list(
-#'        list(c(0.0, -1.0), c(-2.0, -3.0), c(-4.0, -5.0)),
-#'        list(c(1.66, -31023.5), c(10000.9999, 3.0), c(100.9, 1.1), c(0.0, 0.0))
-#'      ))
-#' geojson2wkt(multist)
-#'
-#' # polygon
-#' poly <- list(type = 'Polygon',
-#'      coordinates=list(
-#'        list(c(100.001, 0.001), c(101.12345, 0.001), c(101.001, 1.001), c(100.001, 0.001)),
-#'        list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801), c(100.201, 0.201))
-#' ))
-#' geojson2wkt(poly)
-#' geojson2wkt(poly, fmt=6)
-#'
-#' # multipolygon
-#' mpoly <- list(type = 'MultiPolygon',
-#'               coordinates=list(
-#'                 list(list(c(100.001, 0.001), c(101.001, 0.001), c(101.001, 1.001),
-#'                           c(100.001, 0.001)),
-#'                      list(c(100.201, 0.201), c(100.801, 0.201), c(100.801, 0.801),
-#'                           c(100.201, 0.201))),
-#'                 list(list(c(1.0, 2.0, 3.0, 4.0), c(5.0, 6.0, 7.0, 8.0),
-#'                           c(9.0, 10.0, 11.0, 12.0), c(1.0, 2.0, 3.0, 4.0)))
-#' ))
-#' geojson2wkt(mpoly, fmt=2)
-#'
-#' mpoly2 <- list(type = "MultiPolygon",
-#'               coordinates = list(list(list(c(30, 20), c(45, 40), c(10, 40), c(30, 20))),
-#'                                  list(list(c(15, 5), c(40, 10), c(10, 20), c(5 ,10), c(15, 5))))
-#' )
-#' geojson2wkt(mpoly2, fmt=1)
-#'
-#' # geometrycollection
-#' gmcoll <- list(type = 'GeometryCollection',
-#'  geometries = list(
-#'      list(type = "Point", coordinates = list(0.0, 1.0)),
-#'      list(type = 'LineString', coordinates = list(c(-100.0, 0.0), c(-101.0, -1.0))),
-#'      list(type = 'Polygon',
-#'        'coordinates' = list(list(c(100.001, 0.001),
-#'                        c(101.1235, 0.001),
-#'                        c(101.001, 1.001),
-#'                        c(100.001, 0.001)),
-#'                       list(c(100.201, 0.201),
-#'                        c(100.801, 0.201),
-#'                        c(100.801, 0.801),
-#'                        c(100.201, 0.201)))
-#'      ),
-#'      list(type = 'MultiPoint',
-#'        'coordinates' = list(c(100.0, 3.101), c(101.0, 2.1), c(3.14, 2.18))
-#'      ),
-#'      list(type = 'MultiLineString',
-#'        coordinates = list(list(c(0.0, -1.0), c(-2.0, -3.0), c(-4.0, -5.0)),
-#'                       list(c(1.66, -31023.5, 1.1),
-#'                        c(10000.9999, 3.0, 2.2),
-#'                        c(100.9, 1.1, 3.3),
-#'                        c(0.0, 0.0, 4.4)))
-#'      ),
-#'      list(type = 'MultiPolygon',
-#'           coordinates = list(
-#'             list(list(c(100.001, 0.001),
-#'                       c(101.001, 0.001),
-#'                       c(101.001, 1.001),
-#'                       c(100.001, 0.001)),
-#'                  list(c(100.201, 0.201),
-#'                       c(100.801, 0.201),
-#'                       c(100.801, 0.801),
-#'                       c(100.201, 0.201)) ),
-#'             list(list(c(1.0, 2.0, 3.0, 4.0),
-#'                       c(5.0, 6.0, 7.0, 8.0),
-#'                       c(9.0, 10.0, 11.0, 12.0),
-#'                       c(1.0, 2.0, 3.0, 4.0))))
-#'      )
-#'  )
-#' )
-#' geojson2wkt(gmcoll, fmt=0)
-#'
-#' # Convert geojson as character string to WKT
-#' str <- '
-#' {
-#'    "type": "Point",
-#'    "coordinates": [
-#'        -105.01621,
-#'        39.57422
-#'    ]
-#' }'
-#' geojson2wkt(str)
-#'
-#' str <- '{"type":["LineString"],"coordinates":[[0,0,10],[2,1,20],[4,2,30],[5,4,40]]}'
-#' geojson2wkt(str)
-#'
-#' # From a jsonlite json object
-#' library("jsonlite")
-#' json <- toJSON(list(type="Point", coordinates=c(-105,39)))
-#' geojson2wkt(json)
-#'
-geojson2wkt <- function(obj, fmt = 16, ...) {
+#' - A list with named elements `type` and `coordinates` OR
+#'  `type` and `geometries` (only in the case of GeometryCollection).
+#'  e.g., `list(type = "Point", coordinates = c(1, 0))`
+#' - A list with single named element in the set Point, Multipoint,
+#'  Polygon, Multipolygon, Linestring, Multilinestring,or Geometrycollection,
+#'  e.g., `list(Point = c(1, 0))` - Note that this format is not proper
+#'  GeoJSON, but is less verbose than the previous format, so should save
+#'  the user time and make it easier to use.
+#' 
+#' @section Each point:
+#' For any one point, 2 to 4 values can be used:
+#' 
+#' - 2 values: longitude, latitude
+#' - 3 values: longitude, latitude, altitude 
+#' - 4 values: longitude, latitude, altitude, measure
+#' 
+#' The 3rd value is typically altitude though can be depth in an 
+#' aquatic context.
+#' 
+#' The 4th value is a measurement of some kind.
+#' 
+#' The GeoJSON spec <https://tools.ietf.org/html/rfc7946> actually
+#' doesn't allow a 4th value for a point, but we allow it here since
+#' we're converting to WKT which does allow a 4th value for a point.
+#' 
+#' @section Coordinates data formats:
+#' Coordinates data should follow the following formats:
+#' 
+#' - Point: a vector or list, with a single point (2-4 values)
+#' - MultiPoint: a matrix, with N points
+#' - Linestring: a matrix, with N points
+#' - MultiLinestring: the top most level is a list, containing N matrices
+#' - Polygon: the top most level is a list, containing N matrices
+#' - MultiPolygon: the top most level is a list, the next level is N 
+#' lists, each of them containing N matrices
+#' - Geometrycollection: a list containing any combination and number 
+#' of the above types
+#' 
+#' Matrices by definition can not have unequal lengths in their columns, 
+#' so we don't have to check for that user error.
+#' 
+#' Each matrix can have any number of rows, and from 2 to 4 columns. 
+#' If > 5 columns we stop with an error message.
+geojson2wkt <- function(obj, fmt = 16, third = "z", ...) {
   UseMethod("geojson2wkt")
 }
 
 #' @export
-geojson2wkt.character <- function(obj, fmt = 16, ...) {
-  geojson2wkt(jsonlite::fromJSON(obj, FALSE, ...), fmt)
+geojson2wkt.default <- function(obj, fmt = 16, third = "z", ...) {
+  stop("No 'geojson2wkt' method for ", 
+    paste0(class(obj), collapse = ", "), call. = FALSE)
 }
 
 #' @export
-geojson2wkt.json <- function(obj, fmt = 16, ...) {
-  geojson2wkt(jsonlite::fromJSON(obj, FALSE, ...), fmt)
+geojson2wkt.character <- function(obj, fmt = 16, third = "z", ...) {
+  geojson2wkt(jsonlite::fromJSON(obj, ...), fmt, third)
 }
 
 #' @export
-geojson2wkt.list <- function(obj, fmt = 16, ...) {
-  switch(tolower(obj$type),
-         point = dump_point(obj, fmt),
-         multipoint = dump_multipoint(obj, fmt),
-         linestring = dump_linestring(obj, fmt),
-         multilinestring = dump_multilinestring(obj, fmt),
-         polygon = dump_polygon(obj, fmt),
-         multipolygon = dump_multipolygon(obj, fmt),
-         geometrycollection = dump_geometrycollection(obj, fmt)
+geojson2wkt.json <- function(obj, fmt = 16, third = "z", ...) {
+  geojson2wkt(jsonlite::fromJSON(obj, ...), fmt, third)
+}
+
+#' @export
+geojson2wkt.list <- function(obj, fmt = 16, third = "z", ...) {
+  nms <- tolower(names(obj))
+  if (
+    !any(tolower(wkt_geojson_types) %in% nms) &&
+    (
+      !all(c('type', 'coordinates') %in% nms) &&
+      !all(c('type', 'geometries') %in% nms)
+    )
+  ) {
+    stop(
+      strwrap(
+        paste0(
+          "'obj' must be list w/ either 'type' & 'coordinates' OR one of ", 
+          paste0(tolower(wkt_geojson_types), collapse = ", ")), width = 80))
+  }
+
+  if (
+    !all(c('type', 'coordinates') %in% nms) &&
+    any(tolower(wkt_geojson_types) %in% nms)
+  ) {
+    if ("geometrycollection" == nms) {
+      obj <- list(type = nms, geometries = obj[[1]])
+    } else{
+      obj <- list(type = nms, coordinates = obj[[1]])
+    }
+  }
+
+  switch(
+    tolower(obj$type),
+    point = dump_point(obj, fmt, third),
+    multipoint = dump_multipoint(obj, fmt, third),
+    linestring = dump_linestring(obj, fmt, third),
+    multilinestring = dump_multilinestring(obj, fmt, third),
+    polygon = dump_polygon(obj, fmt, third),
+    multipolygon = dump_multipolygon(obj, fmt, third),
+    geometrycollection = dump_geometrycollection(obj, fmt),
+    stop('type ', obj$type, ' not supported', call. = FALSE)
   )
-}
-
-dump_point <- function(obj, fmt = 16){
-  coords <- obj$coordinates
-  sprintf('POINT (%s)', paste0(format(coords, nsmall = fmt), collapse = " "))
-}
-
-dump_multipoint <- function(obj, fmt = 16){
-  coords <- obj$coordinates
-  str <- paste0(lapply(coords, function(z){
-    sprintf("(%s)", paste0(str_trim_(format(z, nsmall = fmt)), collapse = " "))
-  }), collapse = ", ")
-  sprintf('MULTIPOINT (%s)', str)
-}
-
-dump_linestring <- function(obj, fmt = 16){
-  coords <- obj$coordinates
-  str <- paste0(lapply(coords, function(z){
-    paste0(gsub("\\s", "", format(z, nsmall = fmt)), collapse = " ")
-  }), collapse = ", ")
-  sprintf('LINESTRING (%s)', str)
-}
-
-dump_multilinestring <- function(obj, fmt = 16){
-  coords <- obj$coordinates
-  str <- paste0(lapply(coords, function(z){
-    sprintf("(%s)", paste0(gsub(",", "", unname(sapply(str_trim_(format(z, nsmall = fmt)), paste0, collapse = " "))), collapse = ", "))
-  }), collapse = ", ")
-  sprintf('MULTILINESTRING (%s)', str)
-}
-
-dump_polygon <- function(obj, fmt = 16){
-  coords <- obj$coordinates
-  str <- paste0(lapply(coords, function(z){
-    sprintf("(%s)", paste0(lapply(z, function(w){
-      paste0(gsub("\\s", "", format(w, nsmall = fmt)), collapse = " ")
-    }), collapse = ", "))
-  }), collapse = ", ")
-  sprintf('POLYGON (%s)', str)
-}
-
-dump_multipolygon <- function(obj, fmt = 16){
-  coords <- obj$coordinates
-  str <- paste0(lapply(coords, function(z){
-    sprintf("(%s)", paste0(sprintf("(%s)", lapply(z, function(w){
-      paste0(gsub(",", "", unname(sapply(str_trim_(format(w, nsmall = fmt)), paste0, collapse = " "))), collapse = ", ")
-    })), collapse=", "))
-  }), collapse=", ")
-  sprintf('MULTIPOLYGON (%s)', str)
-}
-
-dump_geometrycollection <- function(obj, fmt = 16){
-  geoms <- obj$geometries
-  str <- paste0(lapply(geoms, function(z){
-    get_fxn(tolower(z$type))(z, fmt)
-  }), collapse = ", ")
-  sprintf('GEOMETRYCOLLECTION (%s)', str)
-}
-
-get_fxn <- function(type){
-  switch(type,
-         point = dump_point,
-         multipoint = dump_multipoint,
-         linestring = dump_linestring,
-         multilinestring = dump_multilinestring,
-         polygon = dump_polygon,
-         multipolygon = dump_multipolygon,
-         geometrycollection = dump_geometrycollection)
 }

@@ -2,9 +2,9 @@
 #'
 #' @export
 #'
-#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon, MultiPolygon, etc.
-#' @param fmt Format string which indicates the number of digits to display after the
-#' decimal point when formatting coordinates. Max: 20
+#' @template fmt
+#' @param ... A GeoJSON-like object representing a Point, LineString, Polygon,
+#' MultiPolygon, etc.
 #' @family R-objects
 #' @examples
 #' ## empty circularstring
@@ -69,6 +69,7 @@ circularstring.list <- function(..., fmt = 16) {
   sprint('CIRCULARSTRING', str)
 }
 
+# helpers -----------
 sprint <- function(type, str) {
   sprintf('%s (%s)', type, str)
 }

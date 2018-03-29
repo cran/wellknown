@@ -7,7 +7,7 @@
 #' @details This is different from the other functions that create WKT from R
 #' objects, in that we can't do the same thing for GeometryCollection's since
 #' many different WkT object could be created from the same input. So,
-#' this function accepts WKT strings already formed and attempts to creat a c
+#' this function accepts WKT strings already formed and attempts to creat a
 #' GeommetryCollection from them.
 #' @family R-objects
 #' @examples
@@ -42,7 +42,9 @@ geometrycollection.character <- function(...) {
     if (grepl("geometrycollection", pts[[1]], ignore.case = TRUE)) {
       check_str(pts[[1]])
     } else {
-      if (!all(vapply(pts, lint, logical(1)))) stop("All inputs must be WKT strings", call. = FALSE)
+      if (!all(vapply(pts, lint, logical(1)))) {
+        stop("All inputs must be WKT strings", call. = FALSE)
+      }
       sprint("GEOMETRYCOLLECTION", paste(pts, collapse = ", "))
     }
   }
