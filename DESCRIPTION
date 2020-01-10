@@ -4,24 +4,26 @@ Description: Convert 'WKT' to 'GeoJSON' and 'GeoJSON' to 'WKT'. Functions
     included for converting between 'GeoJSON' to 'WKT', creating both
     'GeoJSON' features, and non-features, creating 'WKT' from R objects
     (e.g., lists, data.frames, vectors), and linting 'WKT'.
-Version: 0.5.0
+Version: 0.6.0
 Authors@R: person("Scott", "Chamberlain", role = c("aut", "cre"),
-    email = "myrmecocystus@gmail.com")
+    email = "myrmecocystus@gmail.com",
+    comment = c(ORCID="0000-0003-1444-9135"))
 License: MIT + file LICENSE
 LazyData: true
-URL: https://github.com/ropensci/wellknown
+URL: https://docs.ropensci.org/wellknown,
+        https://github.com/ropensci/wellknown
 BugReports: https://github.com/ropensci/wellknown/issues
 VignetteBuilder: knitr
-Imports: jsonlite (>= 0.9.21), V8 (>= 1.0.2)
+Imports: jsonlite, V8 (>= 1.0.2)
 Suggests: knitr, rmarkdown, leaflet (>= 1.0.0), testthat
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.2
 X-schema.org-applicationCategory: Geosptial
 X-schema.org-keywords: spatial, geospatial, wkt, wkb, well-known-text,
         geojson, binary, conversion
 X-schema.org-isPartOf: https://ropensci.org
 NeedsCompilation: no
-Packaged: 2018-03-29 20:15:17 UTC; sckott
-Author: Scott Chamberlain [aut, cre]
+Packaged: 2020-01-09 02:01:01 UTC; sckott
+Author: Scott Chamberlain [aut, cre] (<https://orcid.org/0000-0003-1444-9135>)
 Maintainer: Scott Chamberlain <myrmecocystus@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-03-29 22:00:40 UTC
+Date/Publication: 2020-01-10 05:30:02 UTC
