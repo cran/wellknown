@@ -1,10 +1,13 @@
-#' WKT to GeoJSON and vice versa
-#'
+#' @title wellknown
+#' @description WKT to GeoJSON and vice versa
 #' @name wellknown-package
 #' @aliases wellknown
 #' @docType package
-#' @author Scott Chamberlain \email{myrmecocystus@@gmail.com}
+#' @author Scott Chamberlain
 #' @keywords package
+#' @importFrom wk wkt_translate_wkb wkb_translate_wkt
+#' @useDynLib wellknown, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
 #' @examples
 #' # GeoJSON to WKT
 #' point <- list(Point = c(116.4, 45.2, 11.1))
