@@ -1,7 +1,7 @@
-db8bdda9a4f0cf84246c67382c77f577 *DESCRIPTION
+b8af9db6640c301ee95c4b4b8158c3e7 *DESCRIPTION
 35bd8606c71dfbfad3ad27387e177ad4 *LICENSE
 a1ca785a7b0a8afe727d8880099b66a9 *NAMESPACE
-86a58f29de629b14872fed490456a454 *NEWS.md
+1b6fc96cdc7f0f23c559276cf1ff90a8 *NEWS.md
 330b49967fc57fd76dcae3f33a297b32 *R/RcppExports.R
 e757854990d61ec81ff621b5c7ea3b6e *R/as.json.R
 697a34419ccf2aaafae6a8c22d0c71b0 *R/as_featurecollection.R
@@ -25,7 +25,6 @@ bef2aaf4bc76375cdd2bf17fb94c4ebf *R/properties.R
 040332d228f0f820437a69d8f002d85a *R/wkt2geojson.R
 13483d38b2477c17783ef74356c649ec *R/wktview.R
 29b524d7e443cd25fb44de433ee18eb2 *R/zzz.R
-bb05568b5771eea521b8edc5823c146b *README.md
 9aedd2021879eea8a05495204157c1cc *data/us_cities.rda
 51379c329e25bfa67d7d6c3eb9049fc3 *inst/ignore/geojson2wkb.R
 1786ef2da9c298239409f538f6f49941 *inst/ignore/geojson2wkt_.R
@@ -59,9 +58,10 @@ ffb45ee9f66cac5b934b8905cb14082b *man/wkt_coords.Rd
 42f057dd69352f11ea27b971738695d6 *man/wkt_correct.Rd
 8917d8f6ee1bb705fc316550763a3d5a *man/wkt_reverse.Rd
 1e947c389b80acf5387b4d70be1eb0a2 *man/wktview.Rd
+ccc1d1e6b24c40a591644824f7300bbb *src/Makevars
 5cb805ada9009f8659594ce2c3f4bc14 *src/RcppExports.cpp
 83f29df94e779fdb9ff9f4ce3b065670 *src/bounding_wkt.cpp
-9ea15dcd857150f91e8dac1b75da62e2 *src/centroid.cpp
+74b89603694ac8a9a07d3b5818a8bc12 *src/centroid.cpp
 822028a8cc2a6ee11b8fc758e939ca7d *src/def.h
 4feea29a63c64125c3673b02fd5790a7 *src/reverse.cpp
 e723cbb56f3489b266de4e71f47493e8 *src/utils.cpp
